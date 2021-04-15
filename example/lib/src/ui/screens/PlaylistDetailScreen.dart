@@ -15,16 +15,16 @@ class PlaylistDetailScreen extends StatefulWidget {
 }
 
 class _PlaylistDetailScreenState extends State<PlaylistDetailScreen> {
-  PlaylistDetailScreenBloc bloc;
+   PlaylistDetailScreenBloc? bloc;
 
   @override
   Widget build(BuildContext context) {
     bloc = BlocProvider.of<PlaylistDetailScreenBloc>(context);
 
     return DetailsContentScreen(
-      appBarTitle: bloc._playlist.name,
+      appBarTitle: bloc?._playlist.name,
       bodyContent: StreamBuilder<List<SongInfo>>(
-        stream: bloc.playlistSongs,
+        stream: bloc?.playlistSongs,
         builder: (context, snapshot) {
           if (snapshot.hasError)
             return Utility.createDefaultInfoWidget(Text("${snapshot.error}"));
@@ -32,20 +32,20 @@ class _PlaylistDetailScreenState extends State<PlaylistDetailScreen> {
           if (!snapshot.hasData)
             return Utility.createDefaultInfoWidget(CircularProgressIndicator());
 
-          if (snapshot.data.isEmpty)
+          if (snapshot.data!.isEmpty)
             return NoDataWidget(title: "This playlist has no songs");
 
           return ListView.builder(
-              itemCount: snapshot.data.length,
+              itemCount: snapshot.data!.length,
               itemBuilder: (context, index) {
                 return ListItemWidget(
-                  title: Text("${snapshot.data[index].title}"),
-                  imagePath: snapshot.data[index].albumArtwork,
+                  title: Text("${snapshot.data![index].title}"),
+                  imagePath: snapshot.data![index].albumArtwork,
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        "Artist: ${snapshot.data[index].artist}",
+                        "Artist: ${snapshot.data![index].artist}",
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,
                       ),
@@ -53,7 +53,7 @@ class _PlaylistDetailScreenState extends State<PlaylistDetailScreen> {
                         padding: EdgeInsets.only(top: 1.0),
                       ),
                       Text(
-                        "Album: ${snapshot.data[index].album}",
+                        "Album: ${snapshot.data![index].album}",
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,
                       ),
@@ -62,7 +62,7 @@ class _PlaylistDetailScreenState extends State<PlaylistDetailScreen> {
                   trailing: IconButton(
                     icon: Icon(Icons.delete),
                     onPressed: () {
-                      bloc.removeSong(snapshot.data[index]);
+                      bloc?.removeSong(snapshot.data![index]);
                     },
                   ),
                 );
@@ -104,6 +104,6 @@ class PlaylistDetailScreenBloc extends BlocBase {
   @override
   void dispose() {
     print("playlistdetails bloc dispose");
-    _playlistSongsSubject?.close();
+    _playlistSongsSubject.close();
   }
 }
